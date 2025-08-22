@@ -14,16 +14,20 @@
 Quant_Algo_trading_2025 is an end-to-end algorithmic trading pipeline designed to support research, model development, and backtesting of trading strategies.
 The project combines data engineering, feature engineering, machine learning models, and trading simulations to evaluate strategy performance before live deployment.
 
-🏗️ Project Structure
+
+## 🏗️ Project Structure
+
+```text
 Quant_Algo_trading_2025/
-│
-├── configs/                # YAML configs for data, features, and strategies
+├── configs/                # YAML configs: data, features, strategy
 ├── docker/                 # Dockerfile for reproducible environments
-├── docs/                   # Documentation, metrics, and design notes
-├── scripts/                # Data pipeline + simulation scripts
-├── src/quant_trader/       # Core trading framework (features, modeling, I/O, utils)
+├── docs/                   # Documentation, metrics, design notes
+├── scripts/                # Data pipeline & simulation scripts
+├── src/
+│   └── quant_trader/       # Core framework (features, modeling, io, utils)
 ├── tests/                  # Unit tests and smoke tests
-└── outputs/                # (gitignored) Models, results, plots, logs
+└── outputs/                # (gitignored) models, backtests, plots, logs
+
 
 ⚙️ Installation
 1. Clone the repository
@@ -60,17 +64,20 @@ Run unit and smoke tests to validate the pipeline:
 
 pytest -q
 
-📊 Quick Results
 
-Baseline and tuned strategies have been simulated on historical market data.
-Key metrics (from docs/sim_eval_best_overall.csv):
+## 📊 Quick Results
 
-Strategy	Sharpe Ratio	Max Drawdown	CAGR	Win Rate
-Buy & Hold	0.82	-32%	7.1%	53%
-Baseline Model	1.12	-18%	11.4%	58%
-Tuned Model	1.36	-14%	14.9%	61%
+Baseline and tuned strategies have been simulated on historical market data.  
+**Source:** `docs/sim_eval_best_overall.csv`
 
-Example plot (simulation equity curve):
+| Strategy        | Sharpe | Max Drawdown | CAGR | Win Rate |
+|:----------------|------:|------------:|----:|--------:|
+| Buy & Hold      | 0.82  | -32%        | 7.1% | 53%   |
+| Baseline Model  | 1.12  | -18%        | 11.4% | 58%  |
+| Tuned Model     | 1.36  | -14%        | 14.9% | 61%  |
+
+![Equity Curve](docs/example_equity_curve.png)
+
 
 📚 Documentation
 
