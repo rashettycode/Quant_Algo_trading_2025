@@ -3,7 +3,7 @@
 
 
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
-[![Build Status](https://github.com/rashettycode/Quant_Algo_trading_2025/actions/workflows/ci.yml/badge.svg)](https://github.com/rashettycode/Quant_Algo_trading_2025/actions)
+[![CI](https://github.com/rashettycode/Quant_Algo_trading_2025/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/rashettycode/Quant_Algo_trading_2025/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
