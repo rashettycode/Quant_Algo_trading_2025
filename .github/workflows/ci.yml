@@ -12,11 +12,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10"]   # keep this stable; upgrade later if needed
+        python-version: ["3.10"]
 
     env:
       PYTHONPATH: ${{ github.workspace }}
-      MPLBACKEND: Agg             # avoid GUI issues in matplotlib
+      MPLBACKEND: Agg
+      PYTHONUTF8: "1"
+      TZ: UTC
 
     steps:
       - name: Checkout
@@ -26,24 +28,41 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: 'pip'
+          cache: pip
           cache-dependency-path: |
             requirements.txt
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          # Ensure parquet works even if not pinned in requirements
+          pip install -r requirements.txt || true
+          # Ensure Parquet + testing are available even if not pinned
+          pip install pyarrow fastparquet pytest
+
+      # --- Minimal local data so tests don't need the network ---
+      - name: Seed synthetic prices
+        run: |
           python - <<'PY'
-import importlib, sys
-try:
-    importlib.import_module("pyarrow")
-except Exception:
-    print("Installing pyarrow (not found in requirements)...")
-    import subprocess; subprocess.check_call([sys.executable, "-m", "pip", "install", "pyarrow"])
-PY
-          pip install pytest
+          import pandas as pd, numpy as np, pathlib
+          p = pathlib.Path("data/processed"); p.mkdir(parents=True, exist_ok=True)
+          dates = pd.date_range("2024-01-02", periods=30, freq="B")
+          tickers = ["AAPL","MSFT","SPY"]
+          rng = np.random.default_rng(0)
+          rows=[]
+          for t in tickers:
+              price=100.0
+              for d in dates:
+                  price *= 1 + rng.normal(0.0005, 0.01)
+                  rows.append({
+                      "ticker": t, "date": d,
+                      "open": price*0.99, "high": price*1.01,
+                      "low": price*0.98, "close": price,
+                      "adj_close": price, "volume": 1_000_000
+                  })
+          df = pd.DataFrame(rows)
+          df.to_parquet("data/processed/prices.parquet", index=False)
+          print("wrote data/processed/prices.parquet", len(df))
+          PY
 
       - name: Run tests
         run: pytest -q
