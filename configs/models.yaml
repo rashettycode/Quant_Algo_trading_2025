@@ -1,0 +1,30 @@
+splits:
+  method: time_series
+  train_ratio: 0.7
+  valid_ratio: 0.15
+  test_ratio: 0.15
+
+targets:
+  type: regression   # or classification
+  horizon_days: 1
+
+models:
+  decision_tree:
+    use: true
+    max_depth: [3,5,7,9]
+  random_forest:
+    use: true
+    n_estimators: [200,400,600]
+    max_depth: [5,8,12]
+  xgboost:
+    use: true
+    params_space:
+      n_estimators: [300,600,900]
+      max_depth: [3,5,7]
+      learning_rate: [0.01, 0.05, 0.1]
+      subsample: [0.7, 0.9, 1.0]
+      colsample_bytree: [0.7, 0.9, 1.0]
+
+tuning:
+  method: optuna
+  n_trials: 25

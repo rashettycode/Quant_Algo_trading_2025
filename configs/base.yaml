@@ -1,0 +1,43 @@
+project:
+  name: Quant_Algo_trading_2025
+  timezone: America/Toronto
+  seed: 42
+
+data:
+  storage: parquet
+  raw_dir: data/raw
+  processed_dir: data/processed
+
+  # Historical window used when fetching live data (ignored in file_mode)
+  start_date: "2015-01-01"
+  end_date: null
+
+  # ✅ Keep this non-empty (tests expect it)
+  tickers: ["AAPL","MSFT","GOOGL","GOOG","NVDA","AMZN","META","TSLA","BRK-B","V",
+            "JNJ","PG","AVGO","AMD","ANET","ODFL","MNST","DECK","TSCO","FICO"]
+
+  benchmarks: ["SPY"]
+
+  # Google Drive large-file pointers (optional)
+  processed_parquet_path: "data/processed/prices.parquet"
+  processed_parquet_drive_id: "1rcCnWfUAejjGNkYQgO4VzOb9Ia6qRD8x"
+  features_parquet_path: "data/processed/features.parquet"
+  features_parquet_drive_id: "1BzssiuP_6qabR0N9blUuIo1Df73qjZZl"
+
+sources:
+  yahoo:
+    use: true
+  alpha_vantage:
+    use: false
+    api_key_env: ALPHAVANTAGE_API_KEY
+    outputsize: full
+  fred:
+    use: true
+    api_key_env: FRED_API_KEY
+    series: ["FEDFUNDS","CPIAUCSL","UNRATE"]
+
+# ✅ Tests expect this key to exist
+modes:
+  file_mode: true   # set to false to fetch fresh data instead of using processed parquet
+
+

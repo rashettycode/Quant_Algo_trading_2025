@@ -1,0 +1,30 @@
+# Virtualenv / secrets
+.venv/
+.env
+.env.*
+
+# Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# Data & outputs (keep only sample/)
+data/raw/
+data/interim/
+data/processed/
+data/*.parquet
+*.parquet
+outputs/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+
+# IDE/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+

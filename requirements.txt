@@ -1,0 +1,25 @@
+pandas
+numpy
+pyarrow
+polars
+scikit-learn
+xgboost
+optuna
+ta
+yfinance
+alpha_vantage
+requests
+matplotlib
+seaborn
+pyyaml
+python-dotenv
+joblib
+tqdm
+pytest
+flake8
+black
+optuna>=3.6.0
+fredapi>=0.5.1
+alpha_vantage>=3.0.0
+pandas_datareader>=0.10.0   # (optional fallback for FRED)
+gdown>=5.2.0

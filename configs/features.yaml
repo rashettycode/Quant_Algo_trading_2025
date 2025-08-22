@@ -1,0 +1,25 @@
+features:
+  returns: [1,5,10]
+  volatility_windows: [10,20]
+  sma: [5,20,50,200]
+  ema: [12,26]
+  bollinger:
+    window: 20
+    n_std: 2
+  rsi:
+    window: 14
+  stochastic:
+    k: 14
+    d: 3
+  atr:
+    window: 14
+  breadth:
+    sector: true
+    market: true
+  calendar: true
+  regime:
+    volatility: true
+  volume:
+    zscore_windows: [5,20]
+  vwap: true
+  momentum_quantiles: 5
