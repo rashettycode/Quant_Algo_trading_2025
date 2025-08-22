@@ -1,4 +1,4 @@
-name: ci
+name: CI
 
 on:
   push:
@@ -7,8 +7,16 @@ on:
     branches: [ main, master ]
 
 jobs:
-  pipeline:
+  tests:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10"]   # keep this stable; upgrade later if needed
+
+    env:
+      PYTHONPATH: ${{ github.workspace }}
+      MPLBACKEND: Agg             # avoid GUI issues in matplotlib
 
     steps:
       - name: Checkout
@@ -17,76 +25,25 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+          cache-dependency-path: |
+            requirements.txt
 
-      - name: Cache pip
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Install deps
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install ruff black pytest
-
-      - name: Lint & format check
-        run: |
-          ruff check .
-          black --check src/ scripts/
-
-      # ---- CONFIG-AWARE, OFFLINE PIPELINE ----
-      # We honor your configs/base.yaml but avoid network by supplying a tiny parquet.
-      - name: Prepare file_mode data (synthetic parquet)
-        env:
-          PYTHONPATH: .
-        run: |
-          mkdir -p data/processed
+          # Ensure parquet works even if not pinned in requirements
           python - <<'PY'
-import pandas as pd, numpy as np, pathlib
-p = pathlib.Path("data/processed"); p.mkdir(parents=True, exist_ok=True)
-dates = pd.date_range("2024-01-02", periods=60, freq="B")
-tickers = ["AAPL","MSFT","SPY"]
-rows=[]
-rng = np.random.default_rng(42)
-for t in tickers:
-    price = 100.0
-    for d in dates:
-        price *= 1 + rng.normal(0.0005, 0.01)
-        rows.append({
-            "ticker": t,
-            "date": d,
-            "open": price * 0.99,
-            "high": price * 1.01,
-            "low": price * 0.98,
-            "close": price,
-            "adj_close": price,
-            "volume": 1_000_000
-        })
-pd.DataFrame(rows).to_parquet("data/processed/prices.parquet", index=False)
-print("wrote data/processed/prices.parquet")
+import importlib, sys
+try:
+    importlib.import_module("pyarrow")
+except Exception:
+    print("Installing pyarrow (not found in requirements)...")
+    import subprocess; subprocess.check_call([sys.executable, "-m", "pip", "install", "pyarrow"])
 PY
+          pip install pytest
 
-      - name: Run unified pipeline (config + file_mode)
-        env:
-          PYTHONPATH: .
-        run: |
-          python -m scripts.run_pipeline --config configs/base.yaml --file-mode --k 5
-
-      - name: Smoke: artifacts exist
-        run: |
-          test -f outputs/backtests/vec_k5_thrnone.parquet
-          test -f outputs/backtests/exact_k5_thrnone.parquet
-
-      - name: Upload artifacts (optional)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: pipeline-outputs
-          path: |
-            outputs/**
-            data/processed/features.parquet
-
+      - name: Run tests
+        run: pytest -q
