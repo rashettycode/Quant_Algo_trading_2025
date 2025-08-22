@@ -1,11 +1,10 @@
 
 # Quant_Algo_trading_2025
-# Quant_Algo_trading_2025
+
 
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Build Status](https://github.com/rashettycode/Quant_Algo_trading_2025/actions/workflows/ci.yml/badge.svg)](https://github.com/rashettycode/Quant_Algo_trading_2025/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Tests](https://github.com/rashettycode/Quant_Algo_trading_2025/actions/workflows/ci.yml/badge.svg?event=push)](https://github.com/rashettycode/Quant_Algo_trading_2025/actions)
 
 ---
 
